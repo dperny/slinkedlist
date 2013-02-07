@@ -2,7 +2,7 @@ from node import Node
 
 def testllist():
 
-    size = input("input the size of the dynamic circular array: ")
+    size = input("input the first value: ")
     x = LinkedList(int(size))
 
     #options block. shows commands
@@ -63,15 +63,15 @@ def testllist():
             continue
 
         elif(operation == "ie"):
-            print("array is empty") if x.isEmpty() else print("array not empty")
+            print("list is empty") if x.isEmpty() else print("array not empty")
             continue
 
         elif(operation == "if"):
-            print("array is full") if x.isFull() else print("array not full")
+            print("list is full") if x.isFull() else print("array not full")
             continue
 
         elif(operation == "si"):
-            print("size of the array is {0}".format(x.size()))
+            print("size of the list is {0}".format(x.size()))
             continue
 
         # datum is i (increment i each time) if sequential mode is on
@@ -125,7 +125,8 @@ class LinkedList:
 			i = 0
 			walk = self._headNode
 			while(i < index):
-				walk.tail()
+				walk = walk.tail()
+				i += 1
 			return walk.head()
 
 	def set(self,index,value):
@@ -133,7 +134,8 @@ class LinkedList:
 		i = 0
 		walk = self._headNode
 		while(i < index):
-			walk.tail()
+			walk = walk.tail()
+			i += 1
 		walk.setHead(value)
 
 	def frontadd(self,value):
@@ -156,24 +158,35 @@ class LinkedList:
 		if(index == 0):
 			self.frontadd(value)
 			return
-		self._verifyIndex(index)
+		if(index == self._size):
+			self.backadd(value)
+			return
+		if(index > self._size):
+			raise IndexError
 		i = 0
 		walk = self._headNode
 		while(i < index-1):
-			walk.tail()
+			walk = walk.tail()
+			i += 1
 		walk.setTail(Node(value,walk.tail()))
+		self._size += 1
 
 	def indexremove(self,index):
 		if(index == 0):
 			self.frontremove()
 			return
+		if(index == self._size - 1):
+			rval = self.backremove()
+			return rval
 		self._verifyIndex(index)
 		i = 0
 		walk = self._headNode
 		while(i < index-1):
-			walk.tail()
+			walk = walk.tail()
+			i += 1
 		rval = walk.tail().head()
 		walk.setTail(walk.tail().tail())
+		self._size -= 1
 		return rval
 
 	def frontremove(self):
@@ -206,6 +219,9 @@ class LinkedList:
 		rlist.append(walk.head())
 
 		return rlist
+
+	def size(self):
+		return self._size
 
 	def _verifyIndex(self,index):
 		if(index > self._size-1):
